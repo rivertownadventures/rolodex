@@ -3,7 +3,7 @@
   "appName": "Rolodex",
   "webDir": ".",
   "server": {
-    "url": "https://gopaddle.github.io/rolodex/",
+    "url": "https://rivertownadventures.github.io/rolodex/",
     "cleartext": false
   }
 }
