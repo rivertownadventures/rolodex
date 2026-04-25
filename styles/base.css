@@ -1,0 +1,364 @@
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--page-bg, #2a2420);
+  color: #f5f5f5;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.toolbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  padding-left: calc(16px + env(safe-area-inset-left));
+  padding-right: calc(16px + env(safe-area-inset-right));
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10;
+}
+.instance-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.02em;
+  color: #fff;
+  opacity: 0.9;
+}
+.toolbar-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.toolbar-controls { display: flex; align-items: center; gap: 8px; }
+
+.sheet-picker {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 6px 28px 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08)
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'><path fill='white' fill-opacity='0.7' d='M0 0l5 6 5-6z'/></svg>")
+    no-repeat right 10px center / 9px 6px;
+  color: #fff;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  max-width: 180px;
+}
+.sheet-picker:focus { border-color: var(--accent, #b8432a); }
+.sheet-picker option { background: #1f1a17; color: #fff; }
+
+#search {
+  width: 180px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+}
+#search:focus { border-color: var(--accent, #b8432a); }
+
+.mode-toggle {
+  display: inline-flex;
+  background: rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 2px;
+}
+.mode-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.mode-btn[aria-pressed="true"] {
+  background: var(--accent, #b8432a);
+  opacity: 1;
+}
+
+.icon-btn, .ghost-btn, .primary-btn {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #fff;
+}
+.icon-btn {
+  width: 34px; height: 34px;
+  padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.08);
+  font-size: 18px;
+  line-height: 1;
+}
+.icon-btn:hover { background: rgba(255,255,255,0.15); }
+.ghost-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.primary-btn {
+  background: var(--accent, #b8432a);
+  font-weight: 600;
+}
+.primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.stage {
+  position: absolute;
+  inset: 0;
+  perspective: 1400px;
+  touch-action: none;
+  overflow: hidden;
+}
+.cards {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.6);
+  font-size: 15px;
+  text-align: center;
+  padding: 24px;
+}
+
+/* Card — outer wrapper, two 3D faces inside (front with content, back blank). */
+.card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 320px;
+  height: 200px;
+  margin-left: -160px;
+  margin-top: -100px;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  cursor: grab;
+}
+.card:active { cursor: grabbing; }
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: var(--card-bg, #f5ecd7);
+  color: var(--card-fg, #1a1a1a);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.2);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  padding: 16px 22px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+  transition: box-shadow 150ms ease;
+}
+.card.focused .card-face { box-shadow: 0 18px 46px rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.25); }
+
+/* Back of the card. Pre-rotated 180° so it becomes visible on the second half
+   of a 180° flip. Slightly darker gradient to sell the "paper back" look.
+   Rotated around its center (default origin) so extents match the front. */
+.card-back {
+  transform: rotateX(180deg);
+  background: linear-gradient(180deg, var(--card-bg, #f5ecd7) 0%, #e6d9b5 100%);
+}
+
+/* Two tiny spindle holes along the bottom edge. Inside .card-front this is
+   its own bottom; inside .card-back (rotated 180°) "bottom" in local frame
+   maps to the same global bottom because we position using `bottom: 6px`
+   (hole rendering is in the face's own frame, but both faces render at the
+   card container's bottom edge when their own bottom is set). To make both
+   faces have holes at the container-bottom, we put holes at the local-bottom
+   of the front, and the local-top of the back. */
+.card-front .card-holes {
+  bottom: 6px;
+}
+.card-back .card-holes {
+  top: 6px;
+}
+.card-holes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 120px;
+  pointer-events: none;
+}
+.card-hole {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.35);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.card-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.15;
+}
+.card-subtitle {
+  font-size: 14px;
+  opacity: 0.7;
+  margin: 0;
+}
+.card-body {
+  font-size: 13px;
+  opacity: 0.8;
+  line-height: 1.45;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.card-fields {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  font-size: 12px;
+}
+.card-fields dt { opacity: 0.6; }
+.card-fields dd { margin: 0; opacity: 0.9; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-image {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.08);
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal[hidden] { display: none; }
+[hidden] { display: none !important; }
+.modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+.modal-dialog {
+  position: relative;
+  background: #1f1a17;
+  color: #f5f5f5;
+  border-radius: 14px;
+  padding: 18px 20px;
+  width: min(420px, 92vw);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.modal-head h2 { font-size: 16px; margin: 0; }
+.modal-body {
+  overflow-y: auto;
+  display: grid;
+  gap: 10px;
+}
+.modal-body label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+.modal-body input, .modal-body textarea {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 34px;
+}
+.modal-body input:focus, .modal-body textarea:focus {
+  outline: none;
+  border-color: var(--accent, #b8432a);
+}
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+/* Import chooser (rendered inside .modal-body) */
+.import-intro {
+  margin: 0 0 12px;
+  font-size: 13px;
+  opacity: 0.75;
+  line-height: 1.45;
+}
+.import-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.import-choices .primary-btn {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 14px;
+}
+
+/* Status toast */
+.status {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  font-size: 13px;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+.status.show { opacity: 1; }
+.status.error { background: #b8432a; }
+
+@media (max-width: 600px) {
+  .toolbar { flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem; padding-top: calc(0.5rem + env(safe-area-inset-top)); }
+  .toolbar-controls { flex-wrap: wrap; gap: 0.5rem; width: 100%; }
+  #search { flex: 1 1 100%; min-width: 0; }
+  .icon-btn, .primary-btn, .mode-btn { min-height: 44px; min-width: 44px; }
+  .instance-name { font-size: 1rem; }
+}

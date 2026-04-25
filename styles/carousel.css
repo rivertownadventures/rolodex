@@ -1,0 +1,16 @@
+/* Carousel mode — Cover-Flow-style horizontal layout.
+   Transforms are applied inline from js/mode-carousel.js. */
+
+.stage.mode-carousel {
+  perspective: 1600px;
+  perspective-origin: 50% 50%;
+}
+
+.stage.mode-carousel .cards {
+  transform: translateZ(0);
+}
+
+.stage.mode-carousel .card {
+  transform-origin: 50% 50% 0;
+  transition: opacity 160ms ease;
+}

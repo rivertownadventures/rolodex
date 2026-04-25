@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Rolodex</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#2a2420">
+  <link rel="stylesheet" href="styles/base.css?v=26">
+  <link rel="stylesheet" href="styles/spindle.css?v=26">
+  <link rel="stylesheet" href="styles/carousel.css?v=26">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <header class="toolbar">
+    <div class="toolbar-left">
+      <h1 class="instance-name" id="instance-name">Rolodex</h1>
+      <select id="sheet-picker" class="sheet-picker" aria-label="Switch rolodex" hidden></select>
+    </div>
+    <div class="toolbar-controls">
+      <input type="search" id="search" placeholder="Search…" autocomplete="off">
+      <div class="mode-toggle" role="tablist" aria-label="View mode">
+        <button type="button" id="mode-spindle" class="mode-btn" data-mode="spindle" aria-pressed="true">Spindle</button>
+        <button type="button" id="mode-carousel" class="mode-btn" data-mode="carousel" aria-pressed="false">Carousel</button>
+      </div>
+      <button type="button" id="btn-add" class="icon-btn" title="Add card">+</button>
+      <button type="button" id="btn-import" class="icon-btn" title="Import contacts">⤓</button>
+      <button type="button" id="btn-refresh" class="icon-btn" title="Refresh">⟳</button>
+      <button type="button" id="btn-signin" class="primary-btn">Sign in with Google</button>
+      <input type="file" id="vcard-file" accept=".vcf,.vcard,text/vcard" hidden>
+    </div>
+  </header>
+
+  <main class="stage mode-spindle" id="stage">
+    <div class="cards" id="cards"></div>
+    <div class="empty-state" id="empty-state" hidden>
+      <p>Sign in and load a sheet to see your cards.</p>
+    </div>
+  </main>
+
+  <div class="modal" id="modal" hidden style="display:none">
+    <div class="modal-backdrop" data-close></div>
+    <form class="modal-dialog" id="modal-form">
+      <header class="modal-head">
+        <h2 id="modal-title">Edit card</h2>
+        <button type="button" class="icon-btn" data-close title="Close">×</button>
+      </header>
+      <div class="modal-body" id="modal-fields"></div>
+      <footer class="modal-foot">
+        <button type="button" class="ghost-btn" data-close>Cancel</button>
+        <button type="submit" class="primary-btn" id="modal-save">Save</button>
+      </footer>
+    </form>
+  </div>
+
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/main.js?v=26"></script>
+  <script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(console.error);
+  </script>
+</body>
+</html>

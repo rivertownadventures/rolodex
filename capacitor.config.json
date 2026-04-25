@@ -1,0 +1,9 @@
+{
+  "appId": "com.rivertown.rolodex",
+  "appName": "Rolodex",
+  "webDir": ".",
+  "server": {
+    "url": "https://gopaddle.github.io/rolodex/",
+    "cleartext": false
+  }
+}

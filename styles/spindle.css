@@ -1,0 +1,27 @@
+/* Spindle mode — cards stand UP from a horizontal spindle pinned at their
+   bottom edge. Flipping tips the card backward over the spindle. */
+
+.stage.mode-spindle {
+  perspective: 1800px;
+  perspective-origin: 50% 65%;
+}
+
+.stage.mode-spindle .cards {
+  transform-style: preserve-3d;
+}
+
+/* Optional subtle spindle line across the stage, at the same height where
+   the cards' bottom edges pivot. Purely decorative. */
+.stage.mode-spindle::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 70%;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15) 10%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.15) 90%, transparent);
+  box-shadow: 0 0 6px rgba(0,0,0,0.4);
+  pointer-events: none;
+  z-index: 0;
+}

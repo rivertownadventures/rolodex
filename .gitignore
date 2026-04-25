@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+ios/App/Pods/
+ios/App/build/
+ios/DerivedData/
+*.xcuserdata/
+.vscode/
+.idea/

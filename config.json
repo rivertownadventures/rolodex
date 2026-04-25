@@ -1,0 +1,36 @@
+{
+  "instanceName": "Contacts",
+  "oauthClientId": "226684841610-4d4ar3t4mq6i8mlhjmr73kv3dci7ea97.apps.googleusercontent.com",
+  "spreadsheetId": "1C3M8uxALeLplcAZBNk3-yxUI0CqSgFqm_hSyjJUQhkY",
+  "sheetName": "Contacts",
+  "range": "A1:Z",
+  "idField": "id",
+  "fields": {
+    "frontTitle": "name",
+    "frontSubtitle": "company",
+    "frontImage": "photoUrl",
+    "backBody": "notes",
+    "backFields": ["email", "phone", "lastContact"]
+  },
+  "sheets": {
+    "Contacts": {
+      "fields": {
+        "frontTitle": "name",
+        "frontSubtitle": "company",
+        "frontImage": "photoUrl",
+        "backBody": "notes",
+        "backFields": ["email", "phone", "lastContact"]
+      },
+      "searchFields": ["name", "company", "notes"]
+    },
+    "Inspirational Sayings": { "auto": true }
+  },
+  "theme": {
+    "cardBg": "#f5ecd7",
+    "cardFg": "#1a1a1a",
+    "accent": "#b8432a",
+    "pageBg": "#2a2420"
+  },
+  "defaultMode": "spindle",
+  "searchFields": ["name", "company", "notes"]
+}
