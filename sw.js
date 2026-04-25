@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rolodex-v1';
+const CACHE_NAME = 'rolodex-v2';
 
 const PRECACHE_URLS = [
   './',

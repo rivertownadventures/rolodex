@@ -59,10 +59,11 @@ export function applyTransforms(cardEls, position) {
       continue;
     }
 
+    const cardH = el.offsetHeight || 200;
     el.style.visibility = '';
     el.style.transformOrigin = '50% 100% 0';
     el.style.top = '70%';
-    el.style.marginTop = '-200px';
+    el.style.marginTop = `${-cardH}px`;
     el.style.transform = `translateZ(${zOffset.toFixed(2)}px) rotateX(${angle.toFixed(2)}deg)`;
     el.style.opacity = '1';
     // Z-index stacking: closest-to-focus (by |delta|) rendered on top.

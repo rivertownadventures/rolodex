@@ -21,7 +21,6 @@
 // flip behaviour naturally because pre-rotating a card by ±180° places it
 // on the opposite side of the spindle.
 
-const STATIC_X = -160;      // card center X — right edge at the spindle (x=0)
 const FLIP_DEG = 180;
 const DECK_DEPTH = 6;       // how many cards to show in the deck behind the right slot
 const DECK_Z_STEP = 6;      // pixels further back per card deeper in the deck
@@ -68,11 +67,13 @@ export function applyTransforms(cardEls, position) {
       continue;
     }
 
+    const cardW = el.offsetWidth || 320;
+    const cardH = el.offsetHeight || 200;
     el.style.visibility = '';
     el.style.top = '50%';
-    el.style.marginTop = '-100px';
+    el.style.marginTop = `${-cardH / 2}px`;
     el.style.transformOrigin = '100% 50% 0';
-    el.style.transform = `translate3d(${STATIC_X}px, 0, ${zOffset.toFixed(2)}px) rotateY(${angle.toFixed(2)}deg)`;
+    el.style.transform = `translate3d(${-cardW / 2}px, 0, ${zOffset.toFixed(2)}px) rotateY(${angle.toFixed(2)}deg)`;
     el.style.opacity = '1';
     // Higher z-index for the active pair and the top of the deck; deeper cards fall behind.
     el.style.zIndex = String(1000 - Math.round(Math.abs(delta) * 10));
