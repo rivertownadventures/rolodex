@@ -65,8 +65,10 @@ export function createController({ stageEl, onUpdate, onSelect, onPressCard }) {
     if (!dragging || e.pointerId !== pointerId) return;
     const delta = client(e) - dragStartClient;
     if (!didDrag && Math.abs(delta) > DRAG_THRESHOLD_PX) didDrag = true;
-    // Drag toward the direction that advances: up in spindle, left in carousel.
-    position = clampPos(dragStartPos + (-delta / pxPerCard));
+    // Drag toward the direction that advances: down in spindle (cards fall
+    // forward), left in carousel.
+    const dir = axis === 'y' ? 1 : -1;
+    position = clampPos(dragStartPos + (dir * delta / pxPerCard));
     samples.push({ t: performance.now(), pos: position });
     if (samples.length > 8) samples.shift();
     onUpdate(position);
